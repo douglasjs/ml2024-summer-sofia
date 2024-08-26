@@ -1,21 +1,30 @@
 from sklearn.metrics import precision_score, recall_score
+from collections import deque
+import numpy as np
 
 class ClassificationMetrics:
     def __init__(self, n):
         self.n = n
-        self.x_values = []
-        self.y_values = []
+        self.x_values = deque(maxlen=n)
+        self.y_values = deque(maxlen=n)
 
     def add_point(self, x, y):
         self.x_values.append(x)
         self.y_values.append(y)
 
-    def calculate_precision(self):
-        return precision_score(self.x_values, self.y_values,labels=None, average='binary',)
-
-    def calculate_recall(self):
-        return recall_score(self.x_values, self.y_values,labels=None, average='binary',)
+    def npArray(self):
+        x_array = np.array(self.x_values)
+        y_array = np.array(self.y_values)
+        return x_array, y_array
     
+    def calculate_recall(self):
+        coverDequeToArrayX, coverDequeToArrayY = self.npArray()
+        return recall_score(coverDequeToArrayX, coverDequeToArrayY,labels=None, average='binary',)
+
+    def calculate_precision(self):
+        coverDequeToArrayX, coverDequeToArrayY = self.npArray()
+        return precision_score(coverDequeToArrayX, coverDequeToArrayY,labels=None, average='binary',)
+
     def validate_input(self, value, inputLabel):
         while value not in [0, 1]:
             print("Invalid input. Please enter 0 or 1.")
